@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0f;
+  --foreground: #e0e6ff;
+  --neon-blue: #00d4ff;
+  --neon-purple: #b84dff;
+  --neon-cyan: #40e0d0;
+  --neon-pink: #ff007f;
+  --energy-core: #00ffff;
 }
 
 @theme inline {
@@ -12,15 +17,258 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 35%, #0a0a0f 100%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), 'Orbitron', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Spaceship HUD scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #0f1419, #1a1f2e);
+  border-left: 1px solid var(--neon-blue);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
+  border-radius: 6px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 10px var(--neon-blue);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink));
+  box-shadow: 0 0 15px var(--neon-cyan);
+}
+
+/* Advanced spaceship animations */
+@keyframes starfield {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-100vh) rotate(360deg); }
+}
+
+@keyframes energy-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 5px var(--neon-blue),
+      0 0 10px var(--neon-blue),
+      0 0 15px var(--neon-blue),
+      0 0 20px var(--neon-blue);
+  }
+  50% {
+    box-shadow:
+      0 0 10px var(--neon-cyan),
+      0 0 20px var(--neon-cyan),
+      0 0 30px var(--neon-cyan),
+      0 0 40px var(--neon-cyan);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes hologram-flicker {
+  0%, 100% { opacity: 1; }
+  2% { opacity: 0.8; }
+  4% { opacity: 1; }
+  6% { opacity: 0.9; }
+  8% { opacity: 1; }
+}
+
+@keyframes data-stream {
+  0% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes shield-activate {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+@keyframes warp-speed {
+  0% { transform: scaleX(1) skewX(0deg); }
+  50% { transform: scaleX(1.1) skewX(2deg); }
+  100% { transform: scaleX(1) skewX(0deg); }
+}
+
+/* Spaceship component classes */
+.starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.starfield::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, var(--neon-blue), transparent),
+    radial-gradient(2px 2px at 40px 70px, var(--neon-cyan), transparent),
+    radial-gradient(1px 1px at 90px 40px, var(--neon-purple), transparent),
+    radial-gradient(1px 1px at 130px 80px, var(--neon-pink), transparent),
+    radial-gradient(2px 2px at 160px 30px, var(--neon-blue), transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: starfield 20s linear infinite;
+}
+
+.hud-panel {
+  background: linear-gradient(135deg,
+    rgba(0, 212, 255, 0.05) 0%,
+    rgba(15, 23, 42, 0.8) 35%,
+    rgba(184, 77, 255, 0.05) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 20px rgba(0, 212, 255, 0.2);
+  position: relative;
+}
+
+.hud-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 49%, rgba(0, 212, 255, 0.1) 50%, transparent 51%);
+  pointer-events: none;
+}
+
+.energy-core {
+  animation: energy-pulse 2s ease-in-out infinite;
+  background: radial-gradient(circle, var(--energy-core) 0%, transparent 70%);
+}
+
+.hologram {
+  animation: hologram-flicker 4s infinite;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.data-stream {
+  position: relative;
+  overflow: hidden;
+}
+
+.data-stream::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+  animation: data-stream 3s ease-in-out infinite;
+}
+
+.shield-effect {
+  animation: shield-activate 0.5s ease-out;
+}
+
+.warp-effect {
+  animation: warp-speed 0.3s ease-in-out;
+}
+
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 212, 255, 0.2) 50%,
+    transparent 100%);
+  animation: data-stream 2s ease-in-out infinite;
+}
+
+/* Futuristic button styles */
+.hud-button {
+  background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(184, 77, 255, 0.1));
+  border: 1px solid rgba(0, 212, 255, 0.5);
+  box-shadow:
+    0 0 10px rgba(0, 212, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-button:hover {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    0 0 20px rgba(64, 224, 208, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.hud-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.hud-button:hover::before {
+  left: 100%;
+}
+
+/* Terminal-style text */
+.terminal-text {
+  font-family: 'Courier New', monospace;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Hexagonal panels */
+.hex-panel {
+  clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(184, 77, 255, 0.1));
+  border: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+/* Progress bars with energy effect */
+.energy-bar {
+  background: linear-gradient(90deg,
+    var(--neon-blue) 0%,
+    var(--neon-purple) 50%,
+    var(--neon-pink) 100%);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+  position: relative;
+}
+
+.energy-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: data-stream 1.5s ease-in-out infinite;
 }
