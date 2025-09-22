@@ -14,7 +14,7 @@ const federalTaxBrackets2024: TaxBracket[] = [
   { min: 578125, max: Infinity, rate: 0.37 }
 ];
 
-const selfEmploymentTaxRate = 0.1413; // 14.13% (Social Security + Medicare - employer portion deduction)
+// const selfEmploymentTaxRate = 0.1413; // 14.13% (Social Security + Medicare - employer portion deduction)
 const socialSecurityWageBase = 160200; // 2024 limit
 const medicareRate = 0.029; // 2.9%
 const additionalMedicareRate = 0.009; // 0.9% on income over $200k
@@ -60,48 +60,48 @@ function calculateSelfEmploymentTax(income: number): number {
   return socialSecurityTax + medicareTax + additionalMedicare;
 }
 
-function calculatePayrollTaxes(salary: number): number {
-  // Employee portion of payroll taxes
-  const employeeSocialSecurity = Math.min(salary, socialSecurityWageBase) * 0.062; // 6.2%
-  const employeeMedicare = salary * 0.0145; // 1.45%
-  const additionalMedicare = salary > additionalMedicareThreshold
-    ? (salary - additionalMedicareThreshold) * additionalMedicareRate
-    : 0;
+// function calculatePayrollTaxes(salary: number): number {
+//   // Employee portion of payroll taxes
+//   const employeeSocialSecurity = Math.min(salary, socialSecurityWageBase) * 0.062; // 6.2%
+//   const employeeMedicare = salary * 0.0145; // 1.45%
+//   const additionalMedicare = salary > additionalMedicareThreshold
+//     ? (salary - additionalMedicareThreshold) * additionalMedicareRate
+//     : 0;
 
-  // Employer portion of payroll taxes (also paid by the S-Corp owner)
-  const employerSocialSecurity = Math.min(salary, socialSecurityWageBase) * 0.062; // 6.2%
-  const employerMedicare = salary * 0.0145; // 1.45%
+//   // Employer portion of payroll taxes (also paid by the S-Corp owner)
+//   const employerSocialSecurity = Math.min(salary, socialSecurityWageBase) * 0.062; // 6.2%
+//   const employerMedicare = salary * 0.0145; // 1.45%
 
-  return employeeSocialSecurity + employeeMedicare + additionalMedicare +
-         employerSocialSecurity + employerMedicare;
-}
+//   return employeeSocialSecurity + employeeMedicare + additionalMedicare +
+//          employerSocialSecurity + employerMedicare;
+// }
 
-function calculateLLCTaxes(income: number, state: string): number {
-  const federalIncomeTax = calculateFederalIncomeTax(income);
-  const selfEmploymentTax = calculateSelfEmploymentTax(income);
-  const stateTax = income * (stateTaxRates[state] || 0);
+// function calculateLLCTaxes(income: number, state: string): number {
+//   const federalIncomeTax = calculateFederalIncomeTax(income);
+//   const selfEmploymentTax = calculateSelfEmploymentTax(income);
+//   const stateTax = income * (stateTaxRates[state] || 0);
 
-  return federalIncomeTax + selfEmploymentTax + stateTax;
-}
+//   return federalIncomeTax + selfEmploymentTax + stateTax;
+// }
 
-function calculateSCorpTaxes(totalIncome: number, salary: number, state: string): number {
-  const distributions = totalIncome - salary;
+// function calculateSCorpTaxes(totalIncome: number, salary: number, state: string): number {
+//   const distributions = totalIncome - salary;
 
-  // Salary is subject to federal income tax and payroll taxes
-  const salaryFederalTax = calculateFederalIncomeTax(salary);
-  const payrollTaxes = calculatePayrollTaxes(salary);
-  const salaryStateTax = salary * (stateTaxRates[state] || 0);
+//   // Salary is subject to federal income tax and payroll taxes
+//   const salaryFederalTax = calculateFederalIncomeTax(salary);
+//   const payrollTaxes = calculatePayrollTaxes(salary);
+//   const salaryStateTax = salary * (stateTaxRates[state] || 0);
 
-  // Distributions are subject only to federal and state income tax (no payroll taxes)
-  const distributionsFederalTax = calculateFederalIncomeTax(distributions);
-  const distributionsStateTax = distributions * (stateTaxRates[state] || 0);
+//   // Distributions are subject only to federal and state income tax (no payroll taxes)
+//   const distributionsFederalTax = calculateFederalIncomeTax(distributions);
+//   const distributionsStateTax = distributions * (stateTaxRates[state] || 0);
 
-  // Total taxes on combined income
-  const totalFederalTax = calculateFederalIncomeTax(totalIncome);
-  const totalStateTax = totalIncome * (stateTaxRates[state] || 0);
+//   // Total taxes on combined income
+//   const totalFederalTax = calculateFederalIncomeTax(totalIncome);
+//   const totalStateTax = totalIncome * (stateTaxRates[state] || 0);
 
-  return totalFederalTax + payrollTaxes + totalStateTax;
-}
+//   return totalFederalTax + payrollTaxes + totalStateTax;
+// }
 
 export function calculateTaxes(totalIncome: number, salary: number, state: string) {
   // Ensure salary doesn't exceed total income
@@ -121,7 +121,7 @@ export function calculateTaxes(totalIncome: number, salary: number, state: strin
   const scorpTotalTax = scorpFederalIncomeTax + scorpPayrollTax + scorpStateTax;
 
   const savings = llcTotalTax - scorpTotalTax;
-  const recommendation = savings > 0 ? 'scorp' : 'llc';
+  const recommendation: 'scorp' | 'llc' = savings > 0 ? 'scorp' : 'llc';
 
   return {
     llcTotalTax,

@@ -1,19 +1,38 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import IncomeInput from './IncomeInput';
 import SalarySlider from './SalarySlider';
 import StateSelector from './StateSelector';
 import TaxResults from './TaxResults';
 import { calculateTaxes } from '@/lib/taxCalculations';
 
+interface TaxResults {
+  llcTotalTax: number;
+  scorpTotalTax: number;
+  savings: number;
+  recommendation: 'scorp' | 'llc';
+  breakdown: {
+    llc: {
+      federalIncomeTax: number;
+      selfEmploymentTax: number;
+      stateTax: number;
+    };
+    scorp: {
+      federalIncomeTax: number;
+      payrollTax: number;
+      stateTax: number;
+      salary: number;
+      distributions: number;
+    };
+  };
+}
+
 export default function Calculator() {
-  const t = useTranslations('Calculator');
   const [totalIncome, setTotalIncome] = useState<number>(100000);
   const [salary, setSalary] = useState<number>(50000);
   const [selectedState, setSelectedState] = useState<string>('CA');
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<TaxResults | null>(null);
 
   useEffect(() => {
     if (totalIncome > 0) {
